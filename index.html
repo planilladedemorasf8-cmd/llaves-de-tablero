@@ -783,18 +783,11 @@
 
       <div id="viewAdmin" style="display:none;">
         <div class="search-card">
-          <div
-            style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
-            <div>
-              <h3>Administración de Llaves</h3>
-              <p style="color: var(--text-muted); font-size: 0.8rem; margin-top:0.2rem;">
-                Puede modificar cualquier gancho, guardar en archivo en disco o descargar una copia actualizada.
-              </p>
-            </div>
-            <div style="display:flex;gap:0.5rem;">
-              <button class="btn btn-success" onclick="saveDirectToFileOrDownload()">💾 Guardar en archivo JSON</button>
-              <button class="btn btn-amber" onclick="downloadSelfUpdatedHtml()">⬇️ Exportar .HTML con cambios</button>
-            </div>
+          <div style="margin-bottom:1rem;">
+            <h3>Administración de Llaves</h3>
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin-top:0.2rem;">
+              Modifique cualquier gancho o edite las descripciones de las llaves. Todos los cambios se sincronizan automáticamente.
+            </p>
           </div>
           <table class="board-table admin-table" style="background: var(--surface);">
             <thead>
