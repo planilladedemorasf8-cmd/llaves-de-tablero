@@ -1045,14 +1045,63 @@
     ];
 
     // ========================================================
+    // CONFIGURACIÓN DE NUBE (FIREBASE)
+    // ========================================================
+    const STORAGE_KEY = 'control_llaves_offline_data';
+    const CLOUD_DB_KEY = 'control_llaves_cloud_url';
+    const DEFAULT_CLOUD_URL = 'https://controldellaves-default-rtdb.firebaseio.com';
+    let keys = [];
+
+    function getCloudUrl() {
+      const stored = localStorage.getItem(CLOUD_DB_KEY);
+      const url = (stored && stored.trim()) || DEFAULT_CLOUD_URL;
+      return url ? url.trim().replace(/\/+$/, '') : '';
+    }
+
+    // ========================================================
     // SEGURIDAD: CREDENCIALES ENCRIPTADAS CON HASH SHA-256
-    // La contraseña NO se guarda en texto plano en el archivo.
-    // Si alguien descarga el HTML, solo verá este código hash indescifrable:
     // Por defecto: usuario = admin, contraseña = llaves123
     // ========================================================
     const AUTH_USER_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // admin
     const AUTH_PASS_HASH = '1793915e7ef6685d0f8ce28b33118436dddff101e51d99af1b68d1b944874073'; // llaves123
     const AUTH_STORAGE_KEY = 'control_llaves_session_active';
+    const AUTH_STORAGE_USER_HASH = 'control_llaves_user_hash';
+    const AUTH_STORAGE_PASS_HASH = 'control_llaves_pass_hash';
+
+    let cloudUserHash = null;
+    let cloudPassHash = null;
+
+    function getActiveUserHash() {
+      return cloudUserHash || localStorage.getItem(AUTH_STORAGE_USER_HASH) || AUTH_USER_HASH;
+    }
+
+    function getActivePassHash() {
+      return cloudPassHash || localStorage.getItem(AUTH_STORAGE_PASS_HASH) || AUTH_PASS_HASH;
+    }
+
+    async function syncAuthFromCloud() {
+      const baseUrl = getCloudUrl();
+      if (!baseUrl) return null;
+      try {
+        const authUrl = baseUrl.replace(/\/+$/, '') + '/auth.json';
+        const res = await fetch(authUrl, { cache: 'no-store' });
+        if (res.ok) {
+          const authData = await res.json();
+          if (authData && authData.userHash && authData.passHash) {
+            cloudUserHash = authData.userHash;
+            cloudPassHash = authData.passHash;
+            try {
+              localStorage.setItem(AUTH_STORAGE_USER_HASH, authData.userHash);
+              localStorage.setItem(AUTH_STORAGE_PASS_HASH, authData.passHash);
+            } catch (e) { }
+            return authData;
+          }
+        }
+      } catch (authErr) {
+        console.warn('No se pudo sincronizar credenciales desde Firebase:', authErr);
+      }
+      return null;
+    }
 
     async function sha256(message) {
       const msgBuffer = new TextEncoder().encode(message);
@@ -1087,7 +1136,16 @@
       const userHash = await sha256(user);
       const passHash = await sha256(pass);
 
-      if (userHash === getActiveUserHash() && passHash === getActivePassHash()) {
+      // 1. Verificación inicial inmediata contra memoria / localStorage
+      let isValid = (userHash === getActiveUserHash() && passHash === getActivePassHash());
+
+      // 2. Si no coincide, consultar Firebase en tiempo real por si se cambió desde otra PC o ventana privada
+      if (!isValid) {
+        await syncAuthFromCloud();
+        isValid = (userHash === getActiveUserHash() && passHash === getActivePassHash());
+      }
+
+      if (isValid) {
         sessionStorage.setItem(AUTH_STORAGE_KEY, 'true');
         sessionStorage.setItem('control_llaves_logged_user', user);
         errEl.style.display = 'none';
@@ -1112,17 +1170,6 @@
         if (passInput) passInput.value = '';
         checkAuth();
       }
-    }
-
-    const AUTH_STORAGE_USER_HASH = 'control_llaves_user_hash';
-    const AUTH_STORAGE_PASS_HASH = 'control_llaves_pass_hash';
-
-    function getActiveUserHash() {
-      return localStorage.getItem(AUTH_STORAGE_USER_HASH) || AUTH_USER_HASH;
-    }
-
-    function getActivePassHash() {
-      return localStorage.getItem(AUTH_STORAGE_PASS_HASH) || AUTH_PASS_HASH;
     }
 
     function openSettingsModal() {
@@ -1202,23 +1249,26 @@
         const userHash = await sha256(newUser);
         const passHash = await sha256(newPass);
 
-        // 1. Guardar en memoria local de esta PC
-        localStorage.setItem(AUTH_STORAGE_USER_HASH, userHash);
-        localStorage.setItem(AUTH_STORAGE_PASS_HASH, passHash);
+        // 1. Guardar en memoria y en almacenamiento local de esta PC
+        cloudUserHash = userHash;
+        cloudPassHash = passHash;
+        try {
+          localStorage.setItem(AUTH_STORAGE_USER_HASH, userHash);
+          localStorage.setItem(AUTH_STORAGE_PASS_HASH, passHash);
+        } catch (e) { }
         sessionStorage.setItem('control_llaves_logged_user', newUser);
 
-        // 2. Si hay Firebase conectado, sincronizar en la nube para las otras PCs
+        // 2. Si hay Firebase conectado, sincronizar en la nube para todas las PCs
         const baseUrl = getCloudUrl();
         if (baseUrl) {
-          try {
-            const targetUrl = baseUrl.replace(/\/+$/, '') + '/auth.json';
-            await fetch(targetUrl, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userHash, passHash, updatedAt: new Date().toISOString() })
-            });
-          } catch(cloudErr) {
-            console.warn('No se pudo sincronizar clave en Firebase:', cloudErr);
+          const targetUrl = baseUrl.replace(/\/+$/, '') + '/auth.json';
+          const putRes = await fetch(targetUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userHash, passHash, updatedAt: new Date().toISOString() })
+          });
+          if (!putRes.ok) {
+            throw new Error('No se pudo guardar en Firebase (HTTP ' + putRes.status + ')');
           }
         }
 
@@ -1245,21 +1295,6 @@
         feedback.style.color = '#fca5a5';
         feedback.textContent = '❌ Error: ' + err.message;
       }
-    }
-
-    const STORAGE_KEY = 'control_llaves_offline_data';
-    const CLOUD_DB_KEY = 'control_llaves_cloud_url';
-
-    // Pega aquí la URL de tu Firebase Realtime Database para que TODAS las computadoras
-    // se sincronicen solas desde GitHub sin necesidad de configurar nada en cada PC:
-    const DEFAULT_CLOUD_URL = 'https://controldellaves-default-rtdb.firebaseio.com';
-
-    let keys = [];
-
-    function getCloudUrl() {
-      const stored = localStorage.getItem(CLOUD_DB_KEY);
-      const url = (stored && stored.trim()) || DEFAULT_CLOUD_URL;
-      return url ? url.trim().replace(/\/+$/, '') : '';
     }
 
     function updateCloudStatus(status) {
@@ -1293,6 +1328,9 @@
         return false;
       }
 
+      // Sincronizar credenciales de acceso desde Firebase
+      syncAuthFromCloud();
+
       if (!silent) updateCloudStatus('syncing');
 
       try {
@@ -1317,19 +1355,6 @@
           updateCloudStatus('connected');
           return true;
         }
-
-        // Sincronizar credenciales de acceso si existen en Firebase
-        try {
-          const authUrl = baseUrl.replace(/\/+$/, '') + '/auth.json';
-          const authRes = await fetch(authUrl, { cache: 'no-store' });
-          if (authRes.ok) {
-            const authData = await authRes.json();
-            if (authData && authData.userHash && authData.passHash) {
-              localStorage.setItem(AUTH_STORAGE_USER_HASH, authData.userHash);
-              localStorage.setItem(AUTH_STORAGE_PASS_HASH, authData.passHash);
-            }
-          }
-        } catch (authErr) { }
       } catch (err) {
         if (!silent) console.warn('Error al consultar la base en la nube:', err);
         updateCloudStatus('error');
@@ -1678,6 +1703,7 @@
     }
 
     window.onload = () => {
+      syncAuthFromCloud();
       if (checkAuth()) {
         init();
       }
