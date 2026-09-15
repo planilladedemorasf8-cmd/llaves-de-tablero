@@ -678,11 +678,11 @@
           <p>Tableros 1 y 2 (A y B) • Buscador predictivo e inventario</p>
         </div>
         <div class="header-actions">
+          <!-- Botón de estado de nube oculto para la vista del usuario (sincronización automática activa en segundo plano) -->
           <button class="btn" id="cloudStatusBtn" onclick="openCloudModal()"
-            title="Sincronización en la nube entre múltiples PCs" style="background:#1e293b;border-color:#3b82f6;">
-            <span id="cloudStatusDot"
-              style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#fbbf24;box-shadow:0 0 6px #fbbf24;"></span>
-            <span id="cloudStatusText">☁️ Nube Multi-PC</span>
+            title="Sincronización en la nube entre múltiples PCs" style="display: none;">
+            <span id="cloudStatusDot"></span>
+            <span id="cloudStatusText"></span>
           </button>
           <button type="button" class="btn" id="btnOpenSettings" onclick="openSettingsModal()" title="Cambiar usuario o contraseña"
             style="background:#1e293b;border-color:#475569;">
