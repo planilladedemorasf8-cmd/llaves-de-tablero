@@ -318,13 +318,19 @@
     .badge-code {
       background: #0f172a;
       border: 2px solid;
-      padding: 0.35rem 0.55rem;
+      padding: 0.3rem 0.65rem;
       border-radius: 8px;
       font-weight: 800;
-      font-size: 1.05rem;
-      min-width: 65px;
+      font-size: 1rem;
+      min-width: 68px;
       text-align: center;
       font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.2;
+      box-sizing: border-box;
     }
 
     .badge-a {
@@ -446,6 +452,14 @@
     .board-table th:first-child {
       width: 55px;
       text-align: center;
+    }
+
+    .admin-table th:first-child,
+    .admin-table td:first-child {
+      width: 95px !important;
+      min-width: 90px;
+      text-align: center;
+      white-space: nowrap;
     }
 
     .board-table td {
@@ -782,7 +796,7 @@
               <button class="btn btn-amber" onclick="downloadSelfUpdatedHtml()">⬇️ Exportar .HTML con cambios</button>
             </div>
           </div>
-          <table class="board-table" style="background: var(--surface);">
+          <table class="board-table admin-table" style="background: var(--surface);">
             <thead>
               <tr>
                 <th>Código</th>
@@ -1605,7 +1619,7 @@
       const sorted = [...keys].sort((a, b) => (a.board === b.board ? a.hookNumber - b.hookNumber : a.board.localeCompare(b.board)));
       tbody.innerHTML = sorted.map(k => `
         <tr>
-          <td><span class="badge-code ${k.board === 'A' ? 'badge-a' : 'badge-b'}" style="font-size:0.85rem;padding:0.2rem 0.4rem;">${k.hookNumber}-${k.board}</span></td>
+          <td><span class="badge-code ${k.board === 'A' ? 'badge-a' : 'badge-b'}" style="font-size:0.85rem;padding:0.25rem 0.55rem;min-width:62px;">${k.hookNumber}-${k.board}</span></td>
           <td>Tablero ${k.board}</td>
           <td>Gancho ${k.hookNumber}</td>
           <td style="font-weight:600;">${k.description || '<span style="color:#64748b;">(Vacío)</span>'}</td>
