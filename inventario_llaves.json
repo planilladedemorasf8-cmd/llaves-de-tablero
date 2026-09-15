@@ -1,0 +1,880 @@
+[
+  {
+    "id": "A-1",
+    "board": "A",
+    "hookNumber": 1,
+    "description": "Boletería 39",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "A-2",
+    "board": "A",
+    "hookNumber": 2,
+    "description": "Boletería 38",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "A-3",
+    "board": "A",
+    "hookNumber": 3,
+    "description": "Boletería 42",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "A-4",
+    "board": "A",
+    "hookNumber": 4,
+    "description": "Boletería 32",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "A-5",
+    "board": "A",
+    "hookNumber": 5,
+    "description": "Boletería 22 - Objetos perdidos",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "A-6",
+    "board": "A",
+    "hookNumber": 6,
+    "description": "Baño Misiones Principal",
+    "category": "bano",
+    "isAvailable": true
+  },
+  {
+    "id": "A-7",
+    "board": "A",
+    "hookNumber": 7,
+    "description": "Baños San Juan Misiones Discapacitados",
+    "category": "bano",
+    "isAvailable": true
+  },
+  {
+    "id": "A-8",
+    "board": "A",
+    "hookNumber": 8,
+    "description": "Baños exlusivo boleterías",
+    "category": "bano",
+    "isAvailable": true
+  },
+  {
+    "id": "A-9",
+    "board": "A",
+    "hookNumber": 9,
+    "description": "Pañol limpieza duplicado",
+    "category": "bano",
+    "isAvailable": true
+  },
+  {
+    "id": "A-10",
+    "board": "A",
+    "hookNumber": 10,
+    "description": "Boletería 50-51",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "A-11",
+    "board": "A",
+    "hookNumber": 11,
+    "description": "Bol 48-49",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "A-12",
+    "board": "A",
+    "hookNumber": 12,
+    "description": "Edificio histórico",
+    "category": "patrimonio",
+    "isAvailable": true
+  },
+  {
+    "id": "A-13",
+    "board": "A",
+    "hookNumber": 13,
+    "description": "Edificio histórico MGP",
+    "category": "patrimonio",
+    "isAvailable": true
+  },
+  {
+    "id": "A-14",
+    "board": "A",
+    "hookNumber": 14,
+    "description": "Entrada edificio histórico (destacamento)",
+    "category": "patrimonio",
+    "isAvailable": true
+  },
+  {
+    "id": "A-15",
+    "board": "A",
+    "hookNumber": 15,
+    "description": "Edificio histórico cocina",
+    "category": "patrimonio",
+    "isAvailable": true
+  },
+  {
+    "id": "A-16",
+    "board": "A",
+    "hookNumber": 16,
+    "description": "Vestuario",
+    "category": "patrimonio",
+    "isAvailable": true
+  },
+  {
+    "id": "A-17",
+    "board": "A",
+    "hookNumber": 17,
+    "description": "Marquesina 2 puerta 1",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-18",
+    "board": "A",
+    "hookNumber": 18,
+    "description": "SALIDA A PLAT. 26-27",
+    "category": "plataforma",
+    "isAvailable": true
+  },
+  {
+    "id": "A-19",
+    "board": "A",
+    "hookNumber": 19,
+    "description": "Oficina arquitecto",
+    "category": "patrimonio",
+    "isAvailable": true
+  },
+  {
+    "id": "A-20",
+    "board": "A",
+    "hookNumber": 20,
+    "description": "Torre de control Varios",
+    "category": "seguridad",
+    "isAvailable": true
+  },
+  {
+    "id": "A-21",
+    "board": "A",
+    "hookNumber": 21,
+    "description": "Parrilla",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "A-22",
+    "board": "A",
+    "hookNumber": 22,
+    "description": "SALIDA A PLAT. 30",
+    "category": "plataforma",
+    "isAvailable": true
+  },
+  {
+    "id": "A-23",
+    "board": "A",
+    "hookNumber": 23,
+    "description": "Marquesina 1 puertas 2 y 3",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-24",
+    "board": "A",
+    "hookNumber": 24,
+    "description": "Puerta salida a plataforma 9",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-25",
+    "board": "A",
+    "hookNumber": 25,
+    "description": "Puerta salida a plataforma 19",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-26",
+    "board": "A",
+    "hookNumber": 26,
+    "description": "Puerta entrada San Juan",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-27",
+    "board": "A",
+    "hookNumber": 27,
+    "description": "Puertas salida hasta plataforma- entrada hall ferroviario",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-28",
+    "board": "A",
+    "hookNumber": 28,
+    "description": "Puerta pre embarque 1",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-29",
+    "board": "A",
+    "hookNumber": 29,
+    "description": "Puerta pre embarque 2",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-30",
+    "board": "A",
+    "hookNumber": 30,
+    "description": "Puerta pre embarque 3",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-31",
+    "board": "A",
+    "hookNumber": 31,
+    "description": "Marquesina 2 puertas 2 y 3",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-32",
+    "board": "A",
+    "hookNumber": 32,
+    "description": "Policia",
+    "category": "seguridad",
+    "isAvailable": true
+  },
+  {
+    "id": "A-33",
+    "board": "A",
+    "hookNumber": 33,
+    "description": "Policia (Entrada patio / Entrada cocina)",
+    "category": "seguridad",
+    "isAvailable": true
+  },
+  {
+    "id": "A-34",
+    "board": "A",
+    "hookNumber": 34,
+    "description": "Destacamento llave principal",
+    "category": "seguridad",
+    "isAvailable": true
+  },
+  {
+    "id": "A-35",
+    "board": "A",
+    "hookNumber": 35,
+    "description": "Rack 1",
+    "category": "mantenimiento",
+    "isAvailable": true
+  },
+  {
+    "id": "A-36",
+    "board": "A",
+    "hookNumber": 36,
+    "description": "Rack 2",
+    "category": "mantenimiento",
+    "isAvailable": true
+  },
+  {
+    "id": "A-37",
+    "board": "A",
+    "hookNumber": 37,
+    "description": "",
+    "category": "vacio",
+    "isAvailable": true
+  },
+  {
+    "id": "A-38",
+    "board": "A",
+    "hookNumber": 38,
+    "description": "Sala grupo electrógeno",
+    "category": "mantenimiento",
+    "isAvailable": true
+  },
+  {
+    "id": "A-39",
+    "board": "A",
+    "hookNumber": 39,
+    "description": "Tira de servicio (Sala de termicas)",
+    "category": "mantenimiento",
+    "isAvailable": true
+  },
+  {
+    "id": "A-40",
+    "board": "A",
+    "hookNumber": 40,
+    "description": "Escalera al techo",
+    "category": "otro",
+    "isAvailable": true
+  },
+  {
+    "id": "A-41",
+    "board": "A",
+    "hookNumber": 41,
+    "description": "Sala de Bombas",
+    "category": "mantenimiento",
+    "isAvailable": true
+  },
+  {
+    "id": "A-42",
+    "board": "A",
+    "hookNumber": 42,
+    "description": "Garita Misiones",
+    "category": "seguridad",
+    "isAvailable": true
+  },
+  {
+    "id": "A-43",
+    "board": "A",
+    "hookNumber": 43,
+    "description": "Garita Nueva",
+    "category": "seguridad",
+    "isAvailable": true
+  },
+  {
+    "id": "A-44",
+    "board": "A",
+    "hookNumber": 44,
+    "description": "Estacionamiento Misiones",
+    "category": "plataforma",
+    "isAvailable": true
+  },
+  {
+    "id": "A-45",
+    "board": "A",
+    "hookNumber": 45,
+    "description": "Estacionamiento San Juan",
+    "category": "plataforma",
+    "isAvailable": true
+  },
+  {
+    "id": "A-46",
+    "board": "A",
+    "hookNumber": 46,
+    "description": "Reja darsena a estacionamiento",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-47",
+    "board": "A",
+    "hookNumber": 47,
+    "description": "Calle Francisco Da Pozzo",
+    "category": "plataforma",
+    "isAvailable": true
+  },
+  {
+    "id": "A-48",
+    "board": "A",
+    "hookNumber": 48,
+    "description": "Rejas marquesina- Luro tanque",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-49",
+    "board": "A",
+    "hookNumber": 49,
+    "description": "Luz UTA",
+    "category": "mantenimiento",
+    "isAvailable": true
+  },
+  {
+    "id": "A-50",
+    "board": "A",
+    "hookNumber": 50,
+    "description": "Tapa de gas",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-51",
+    "board": "A",
+    "hookNumber": 51,
+    "description": "Tapa pilar 9 de Julio",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-52",
+    "board": "A",
+    "hookNumber": 52,
+    "description": "Puerta tapa calle 25 de Mayo",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-53",
+    "board": "A",
+    "hookNumber": 53,
+    "description": "Reja Ferrocarril",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "A-54",
+    "board": "A",
+    "hookNumber": 54,
+    "description": "Deposito Bol 48-49",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "B-1",
+    "board": "B",
+    "hookNumber": 1,
+    "description": "Boletería 29",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "B-2",
+    "board": "B",
+    "hookNumber": 2,
+    "description": "Boletería 34",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "B-3",
+    "board": "B",
+    "hookNumber": 3,
+    "description": "Boletería 10",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "B-4",
+    "board": "B",
+    "hookNumber": 4,
+    "description": "Boletería 23",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "B-5",
+    "board": "B",
+    "hookNumber": 5,
+    "description": "Local 24-A",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "B-6",
+    "board": "B",
+    "hookNumber": 6,
+    "description": "Local 18-A",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "B-7",
+    "board": "B",
+    "hookNumber": 7,
+    "description": "Boletería 44",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "B-8",
+    "board": "B",
+    "hookNumber": 8,
+    "description": "Boleterías 1-2-3",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "B-9",
+    "board": "B",
+    "hookNumber": 9,
+    "description": "Boletería 24",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "B-10",
+    "board": "B",
+    "hookNumber": 10,
+    "description": "Encomiendas 3- B",
+    "category": "otro",
+    "isAvailable": true
+  },
+  {
+    "id": "B-11",
+    "board": "B",
+    "hookNumber": 11,
+    "description": "Encomiendas 7-8- B",
+    "category": "otro",
+    "isAvailable": true
+  },
+  {
+    "id": "B-12",
+    "board": "B",
+    "hookNumber": 12,
+    "description": "Reja galpón Luro Entrada",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "B-13",
+    "board": "B",
+    "hookNumber": 13,
+    "description": "Pañol mantenimiento- Losa de atrás",
+    "category": "mantenimiento",
+    "isAvailable": true
+  },
+  {
+    "id": "B-14",
+    "board": "B",
+    "hookNumber": 14,
+    "description": "Pañol mantenimiento eléctrico - Jardinería",
+    "category": "mantenimiento",
+    "isAvailable": true
+  },
+  {
+    "id": "B-15",
+    "board": "B",
+    "hookNumber": 15,
+    "description": "Depósito atrás de Balcarce",
+    "category": "otro",
+    "isAvailable": true
+  },
+  {
+    "id": "B-16",
+    "board": "B",
+    "hookNumber": 16,
+    "description": "Local 20 A-B EX - HAVANNA",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "B-17",
+    "board": "B",
+    "hookNumber": 17,
+    "description": "Maggie Local 27/30",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "B-18",
+    "board": "B",
+    "hookNumber": 18,
+    "description": "Boletería 46",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "B-19",
+    "board": "B",
+    "hookNumber": 19,
+    "description": "Cortina Galpón",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "B-20",
+    "board": "B",
+    "hookNumber": 20,
+    "description": "Llave candado canilla Luro",
+    "category": "seguridad",
+    "isAvailable": true
+  },
+  {
+    "id": "B-21",
+    "board": "B",
+    "hookNumber": 21,
+    "description": "Local 16 A",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "B-22",
+    "board": "B",
+    "hookNumber": 22,
+    "description": "Uta",
+    "category": "otro",
+    "isAvailable": true
+  },
+  {
+    "id": "B-23",
+    "board": "B",
+    "hookNumber": 23,
+    "description": "Cuarto de limpieza en Baño San Juan",
+    "category": "bano",
+    "isAvailable": true
+  },
+  {
+    "id": "B-24",
+    "board": "B",
+    "hookNumber": 24,
+    "description": "Puerta cachito",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "B-25",
+    "board": "B",
+    "hookNumber": 25,
+    "description": "Depositos elementos electricos",
+    "category": "mantenimiento",
+    "isAvailable": true
+  },
+  {
+    "id": "B-26",
+    "board": "B",
+    "hookNumber": 26,
+    "description": "Tractor",
+    "category": "mantenimiento",
+    "isAvailable": true
+  },
+  {
+    "id": "B-27",
+    "board": "B",
+    "hookNumber": 27,
+    "description": "EX LOCAL MALETEROS",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "B-28",
+    "board": "B",
+    "hookNumber": 28,
+    "description": "Archivo",
+    "category": "patrimonio",
+    "isAvailable": true
+  },
+  {
+    "id": "B-29",
+    "board": "B",
+    "hookNumber": 29,
+    "description": "Archivo Nuevo",
+    "category": "patrimonio",
+    "isAvailable": true
+  },
+  {
+    "id": "B-30",
+    "board": "B",
+    "hookNumber": 30,
+    "description": "Local 15-16 b",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "B-31",
+    "board": "B",
+    "hookNumber": 31,
+    "description": "Local 14-A",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "B-32",
+    "board": "B",
+    "hookNumber": 32,
+    "description": "Porton curvita",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "B-33",
+    "board": "B",
+    "hookNumber": 33,
+    "description": "Reja Vestuario",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "B-34",
+    "board": "B",
+    "hookNumber": 34,
+    "description": "Vias curva chaco",
+    "category": "plataforma",
+    "isAvailable": true
+  },
+  {
+    "id": "B-35",
+    "board": "B",
+    "hookNumber": 35,
+    "description": "Boletería 17-18",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "B-36",
+    "board": "B",
+    "hookNumber": 36,
+    "description": "Maquina productos baño 4 san juan",
+    "category": "bano",
+    "isAvailable": true
+  },
+  {
+    "id": "B-37",
+    "board": "B",
+    "hookNumber": 37,
+    "description": "Maquina productos baño 5 misiones",
+    "category": "bano",
+    "isAvailable": true
+  },
+  {
+    "id": "B-38",
+    "board": "B",
+    "hookNumber": 38,
+    "description": "Oficina Bares y Kioscos",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "B-39",
+    "board": "B",
+    "hookNumber": 39,
+    "description": "Reja al lado de administración",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "B-40",
+    "board": "B",
+    "hookNumber": 40,
+    "description": "Candado silla de ruedas",
+    "category": "seguridad",
+    "isAvailable": true
+  },
+  {
+    "id": "B-41",
+    "board": "B",
+    "hookNumber": 41,
+    "description": "",
+    "category": "vacio",
+    "isAvailable": true
+  },
+  {
+    "id": "B-42",
+    "board": "B",
+    "hookNumber": 42,
+    "description": "Candado puerta de encomiendas",
+    "category": "seguridad",
+    "isAvailable": true
+  },
+  {
+    "id": "B-43",
+    "board": "B",
+    "hookNumber": 43,
+    "description": "",
+    "category": "vacio",
+    "isAvailable": true
+  },
+  {
+    "id": "B-44",
+    "board": "B",
+    "hookNumber": 44,
+    "description": "Enfermería",
+    "category": "seguridad",
+    "isAvailable": true
+  },
+  {
+    "id": "B-45",
+    "board": "B",
+    "hookNumber": 45,
+    "description": "",
+    "category": "vacio",
+    "isAvailable": true
+  },
+  {
+    "id": "B-46",
+    "board": "B",
+    "hookNumber": 46,
+    "description": "Estacionamiento San Juan barrera",
+    "category": "plataforma",
+    "isAvailable": true
+  },
+  {
+    "id": "B-47",
+    "board": "B",
+    "hookNumber": 47,
+    "description": "",
+    "category": "vacio",
+    "isAvailable": true
+  },
+  {
+    "id": "B-48",
+    "board": "B",
+    "hookNumber": 48,
+    "description": "",
+    "category": "vacio",
+    "isAvailable": true
+  },
+  {
+    "id": "B-49",
+    "board": "B",
+    "hookNumber": 49,
+    "description": "Tranquera",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "B-50",
+    "board": "B",
+    "hookNumber": 50,
+    "description": "Local 22-A",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "B-51",
+    "board": "B",
+    "hookNumber": 51,
+    "description": "Local 31-B",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "B-52",
+    "board": "B",
+    "hookNumber": 52,
+    "description": "Boletería 45",
+    "category": "boleteria",
+    "isAvailable": true
+  },
+  {
+    "id": "B-53",
+    "board": "B",
+    "hookNumber": 53,
+    "description": "Puerta de atrás puesto de diarios",
+    "category": "puerta",
+    "isAvailable": true
+  },
+  {
+    "id": "B-54",
+    "board": "B",
+    "hookNumber": 54,
+    "description": "Depósito Gastronomia",
+    "category": "local",
+    "isAvailable": true
+  },
+  {
+    "id": "B-47-1787509950540",
+    "board": "B",
+    "hookNumber": 47,
+    "description": "Pruebas",
+    "isAvailable": true
+  },
+  {
+    "id": "B-47-1787510979576",
+    "board": "B",
+    "hookNumber": 47,
+    "description": "Prueba",
+    "isAvailable": true
+  }
+]

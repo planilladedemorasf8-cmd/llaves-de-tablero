@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Llaves - Tableros 1 y 2 (100% Offline & Sin Internet)</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231e3a8a'/><path d='M21 7a6 6 0 0 0-5.8 4.5l-8.7 8.7a1.5 1.5 0 0 0-.4 1.1V24a1 1 0 0 0 1 1h2.5a1 1 0 0 0 .7-.3l1.8-1.8.7.7a1 1 0 0 0 1.4 0l1.4-1.4.7.7a1 1 0 0 0 1.4 0l1.2-1.2A6 6 0 1 0 21 7zm0 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4z' fill='%23fbbf24'/></svg>" />
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-dark: #172554;
+      --primary-light: #3b82f6;
+      --accent: #f59e0b;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-light: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #475569;
+      --success: #10b981;
+      --danger: #ef4444;
+      --board-a: #2563eb;
+      --board-b: #0d9488;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    header { background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%); border-bottom: 2px solid #3b82f6; padding: 1rem 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+    .header-content { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .title-area h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: 0.5px; color: #fff; display: flex; align-items: center; gap: 0.5rem; }
+    .title-area p { font-size: 0.8rem; color: #93c5fd; margin-top: 0.2rem; }
+    .header-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .btn { background: var(--surface-light); color: #fff; border: 1px solid var(--border); padding: 0.45rem 0.85rem; border-radius: 8px; cursor: pointer; font-size: 0.825rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s; }
+    .btn:hover { background: #475569; border-color: #94a3b8; }
+    .btn-primary { background: var(--primary-light); border-color: #60a5fa; }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-success { background: var(--success); border-color: #34d399; }
+    .btn-success:hover { background: #059669; }
+    .btn-danger { background: var(--danger); border-color: #f87171; }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-amber { background: #d97706; border-color: #fbbf24; }
+    .btn-amber:hover { background: #b45309; }
+    
+    /* Sync banner */
+    .sync-banner { max-width: 1300px; margin: 1rem auto 0; padding: 0.75rem 1.25rem; background: #1e293b; border: 1px solid #3b82f6; border-radius: 10px; width: 95%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; font-size: 0.85rem; }
+    .sync-status { display: flex; align-items: center; gap: 0.5rem; color: #93c5fd; }
+    .sync-dot { width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .sync-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    
+    main { max-width: 1300px; margin: 0 auto; padding: 1rem 1.5rem 2rem; width: 100%; flex: 1; display: flex; flex-direction: column; gap: 1.25rem; }
+    
+    .search-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+    .search-input-wrapper { position: relative; }
+    .search-input { width: 100%; background: #0f172a; border: 2px solid #3b82f6; border-radius: 10px; padding: 0.9rem 1.25rem 0.9rem 3rem; color: #fff; font-size: 1.15rem; font-weight: 500; outline: none; transition: all 0.2s; box-shadow: 0 0 15px rgba(59,130,246,0.2); }
+    .search-input:focus { border-color: #60a5fa; box-shadow: 0 0 25px rgba(59,130,246,0.4); }
+    .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.25rem; color: #94a3b8; pointer-events: none; }
+    .search-clear { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #94a3b8; font-size: 1.25rem; cursor: pointer; display: none; }
+    
+    .quick-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.85rem; align-items: center; }
+    .chip-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-right: 0.25rem; }
+    .chip { background: #0f172a; border: 1px solid var(--border); color: #cbd5e1; padding: 0.3rem 0.65rem; border-radius: 20px; font-size: 0.75rem; cursor: pointer; transition: all 0.15s; }
+    .chip:hover, .chip.active { background: #2563eb; color: #fff; border-color: #60a5fa; }
+    
+    .results-header { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted); }
+    
+    .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0.85rem; margin-top: 0.5rem; }
+    .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; transition: transform 0.15s, border-color 0.15s; cursor: pointer; }
+    .result-card:hover { transform: translateY(-2px); border-color: #60a5fa; background: #24344d; }
+    .result-left { display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0; }
+    .badge-code { background: #0f172a; border: 2px solid; padding: 0.35rem 0.55rem; border-radius: 8px; font-weight: 800; font-size: 1.05rem; min-width: 65px; text-align: center; font-variant-numeric: tabular-nums; }
+    .badge-a { border-color: #3b82f6; color: #60a5fa; background: rgba(37,99,235,0.15); }
+    .badge-b { border-color: #14b8a6; color: #2dd4bf; background: rgba(13,148,136,0.15); }
+    
+    .result-info { flex: 1; min-width: 0; }
+    .result-desc { font-weight: 700; font-size: 0.95rem; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .result-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.15rem; }
+    .highlight { background: rgba(245, 158, 11, 0.4); color: #fde047; padding: 0 2px; border-radius: 2px; font-weight: bold; }
+    
+    .tabs { display: flex; gap: 0.5rem; border-bottom: 2px solid var(--surface-light); padding-bottom: 0.5rem; }
+    .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+    .tab-btn.active { background: var(--surface-light); color: #fff; }
+    
+    .board-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    @media (max-width: 900px) { .board-container { grid-template-columns: 1fr; } }
+    
+    .board-column { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .board-header { padding: 0.75rem 1rem; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 1px; font-size: 0.95rem; }
+    .header-a { background: #1e3a8a; border-bottom: 2px solid #3b82f6; }
+    .header-b { background: #134e4a; border-bottom: 2px solid #14b8a6; }
+    
+    .board-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .board-table th { background: #0f172a; padding: 0.55rem; color: #94a3b8; font-weight: 600; text-align: left; border-bottom: 1px solid var(--border); }
+    .board-table th:first-child { width: 55px; text-align: center; }
+    .board-table td { padding: 0.45rem 0.65rem; border-bottom: 1px solid #334155; }
+    .board-table tr:hover { background: #2d3f59; cursor: pointer; }
+    .board-table tr.highlighted { background: #4338ca !important; border-left: 4px solid #a5b4fc; }
+    .hook-num { text-align: center; font-weight: bold; color: #cbd5e1; }
+    .desc-text { color: #f8fafc; font-weight: 500; }
+    .empty-desc { color: #64748b; font-style: italic; }
+    
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; max-width: 580px; width: 100%; padding: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.6); max-height: 90vh; overflow-y: auto; }
+    .modal-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    .form-group { margin-bottom: 0.85rem; }
+    .form-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem; font-weight: 600; }
+    .form-input { width: 100%; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem 0.75rem; color: #fff; font-size: 0.9rem; }
+    .form-input:focus { outline: none; border-color: #3b82f6; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.25rem; }
+    
+    .drop-overlay { position: fixed; inset: 0; background: rgba(30, 58, 138, 0.85); border: 4px dashed #60a5fa; z-index: 999; display: none; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: white; pointer-events: none; }
+    .drop-overlay.active { display: flex; }
+  </style>
+</head>
+<body>
+  <div id="dropOverlay" class="drop-overlay">📥 Suelte aquí el archivo "inventario_llaves.json" para cargarlo</div>
+
+  <header>
+    <div class="header-content">
+      <div class="title-area">
+        <h1>🔑 CONTROL DE LLAVES</h1>
+        <p>Tableros 1 y 2 (A y B) • Buscador predictivo e inventario</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="openNewKeyModal()">➕ Nueva Llave</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="search-card">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Escriba aquí para buscar: ej. Boletería 29, Pañol, Baño, Local 24, Candado..."
+          autofocus
+          autocomplete="off"
+        >
+        <button id="searchClear" class="search-clear" onclick="clearSearch()">✕</button>
+      </div>
+      <div class="quick-chips">
+        <span class="chip-label">Filtros rápidos:</span>
+        <button class="chip" onclick="setSearchFilter('Boletería')">Boleterías</button>
+        <button class="chip" onclick="setSearchFilter('Local')">Locales</button>
+        <button class="chip" onclick="setSearchFilter('Baño')">Baños</button>
+        <button class="chip" onclick="setSearchFilter('Puerta')">Puertas</button>
+        <button class="chip" onclick="setSearchFilter('Pañol')">Pañol / Mantenimiento</button>
+        <button class="chip" onclick="setSearchFilter('Edificio')">Edificio Histórico</button>
+        <button class="chip" onclick="setSearchFilter('Estacionamiento')">Estacionamiento</button>
+        <button class="chip" onclick="setSearchFilter('Candado')">Candados / Rejas</button>
+        <button class="chip" onclick="setSearchFilter('')">Limpiar filtro</button>
+      </div>
+    </div>
+
+    <div id="resultsSection">
+      <div class="results-header">
+        <span id="resultsCount">Resultados encontrados: 0</span>
+        <span>Código formato: <strong>[N° Gancho - Tablero]</strong></span>
+      </div>
+      <div id="resultsGrid" class="results-grid"></div>
+    </div>
+
+    <div>
+      <div class="tabs">
+        <button class="tab-btn active" id="tabBoardsBtn" onclick="switchView('boards')">📋 Vista Tableros A y B</button>
+        <button class="tab-btn" id="tabAdminBtn" onclick="switchView('admin')">⚙️ Administrar Inventario</button>
+      </div>
+    </div>
+
+    <div id="viewBoards" class="board-container">
+      <!-- TABLERO A -->
+      <div class="board-column">
+        <div class="board-header header-a">TABLERO A (Ganchos 1 al 54)</div>
+        <table class="board-table">
+          <thead>
+            <tr><th>N°</th><th>Descripción / Ubicación</th><th>Acción</th></tr>
+          </thead>
+          <tbody id="tableA_body"></tbody>
+        </table>
+      </div>
+      <!-- TABLERO B -->
+      <div class="board-column">
+        <div class="board-header header-b">TABLERO B (Ganchos 1 al 54)</div>
+        <table class="board-table">
+          <thead>
+            <tr><th>N°</th><th>Descripción / Ubicación</th><th>Acción</th></tr>
+          </thead>
+          <tbody id="tableB_body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="viewAdmin" style="display:none;">
+      <div class="search-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+          <div>
+            <h3>Administración de Llaves</h3>
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin-top:0.2rem;">
+              Puede modificar cualquier gancho, guardar en archivo en disco o descargar una copia actualizada.
+            </p>
+          </div>
+          <div style="display:flex;gap:0.5rem;">
+            <button class="btn btn-success" onclick="saveDirectToFileOrDownload()">💾 Guardar en archivo JSON</button>
+            <button class="btn btn-amber" onclick="downloadSelfUpdatedHtml()">⬇️ Exportar .HTML con cambios</button>
+          </div>
+        </div>
+        <table class="board-table" style="background: var(--surface);">
+          <thead>
+            <tr><th>Código</th><th>Tablero</th><th>Gancho</th><th>Descripción</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="adminTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL EDIT/CREATE -->
+  <div id="keyModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-title">
+        <span id="modalTitle">Editar Llave</span>
+        <button onclick="closeModal()" style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">✕</button>
+      </div>
+      <form id="keyForm" onsubmit="saveKeyForm(event)">
+        <input type="hidden" id="formKeyId">
+        <div class="form-group">
+          <label class="form-label">Tablero</label>
+          <select id="formBoard" class="form-input">
+            <option value="A">Tablero A</option>
+            <option value="B">Tablero B</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Número de Gancho (1 al 54)</label>
+          <input type="number" id="formHook" class="form-input" min="1" max="100" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Descripción / Ubicación</label>
+          <input type="text" id="formDesc" class="form-input" placeholder="Ej. Boletería 29, Baño Misiones..." required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-success">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL MULTI-PC SYNC HELP -->
+  <div id="syncHelpModal" class="modal-overlay">
+    <div class="modal" style="max-width: 650px;">
+      <div class="modal-title">
+        <span>📁 Guardado en Carpeta y Uso en Varias Computadoras</span>
+        <button onclick="closeSyncHelpModal()" style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">✕</button>
+      </div>
+      <div style="font-size:0.875rem; color:#cbd5e1; line-height:1.6; display:flex; flex-direction:column; gap:1rem;">
+        <div style="background:#0f172a; padding:1rem; border-radius:8px; border:1px solid #3b82f6;">
+          <strong style="color:#60a5fa; font-size:0.95rem;">Opción 1 (La más fácil): Archivo .HTML Actualizado</strong>
+          <p style="margin-top:0.3rem;">
+            Cada vez que modifique llaves, haga clic en <strong>"⬇️ Guardar .HTML Actualizado"</strong>. Ese único archivo contiene toda la app con los nuevos datos incrustados. Cópielo a un pendrive o carpeta compartida y ábralo en cualquier computadora con doble clic.
+          </p>
+        </div>
+
+        <div style="background:#0f172a; padding:1rem; border-radius:8px; border:1px solid #10b981;">
+          <strong style="color:#34d399; font-size:0.95rem;">Opción 2: Archivo "inventario_llaves.json" en la Carpeta</strong>
+          <p style="margin-top:0.3rem;">
+            Guarde <strong>inventario_llaves.json</strong> en la misma carpeta que este archivo .HTML o en un pendrive:
+          </p>
+          <ul style="margin-left:1.25rem; margin-top:0.4rem; font-size:0.825rem;">
+            <li>En Google Chrome o Microsoft Edge, haga clic en <strong>"🔗 Vincular inventario_llaves.json"</strong> para que guarde directamente en el archivo en disco.</li>
+            <li>En cualquier otra PC, simplemente <strong>arrastre el archivo .json sobre esta ventana</strong> para cargar las llaves al instante.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="closeSyncHelpModal()">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const INITIAL_DATA = [
+      {"id":"A-1","board":"A","hookNumber":1,"description":"Boletería 39","isAvailable":true},
+      {"id":"A-2","board":"A","hookNumber":2,"description":"Boletería 38","isAvailable":true},
+      {"id":"A-3","board":"A","hookNumber":3,"description":"Boletería 42","isAvailable":true},
+      {"id":"A-4","board":"A","hookNumber":4,"description":"Boletería 32","isAvailable":true},
+      {"id":"A-5","board":"A","hookNumber":5,"description":"Boletería 22 - Objetos perdidos","isAvailable":true},
+      {"id":"A-6","board":"A","hookNumber":6,"description":"Baño Misiones Principal","isAvailable":true},
+      {"id":"A-7","board":"A","hookNumber":7,"description":"Baños San Juan Misiones Discapacitados","isAvailable":true},
+      {"id":"A-8","board":"A","hookNumber":8,"description":"Baños exlusivo boleterías","isAvailable":true},
+      {"id":"A-9","board":"A","hookNumber":9,"description":"Pañol limpieza duplicado","isAvailable":true},
+      {"id":"A-10","board":"A","hookNumber":10,"description":"Boletería 50-51","isAvailable":true},
+      {"id":"A-11","board":"A","hookNumber":11,"description":"Bol 48-49","isAvailable":true},
+      {"id":"A-12","board":"A","hookNumber":12,"description":"Edificio histórico","isAvailable":true},
+      {"id":"A-13","board":"A","hookNumber":13,"description":"Edificio histórico MGP","isAvailable":true},
+      {"id":"A-14","board":"A","hookNumber":14,"description":"Entrada edificio histórico (destacamento)","isAvailable":true},
+      {"id":"A-15","board":"A","hookNumber":15,"description":"Edificio histórico cocina","isAvailable":true},
+      {"id":"A-16","board":"A","hookNumber":16,"description":"Vestuario","isAvailable":true},
+      {"id":"A-17","board":"A","hookNumber":17,"description":"Marquesina 2 puerta 1","isAvailable":true},
+      {"id":"A-18","board":"A","hookNumber":18,"description":"SALIDA A PLAT. 26-27","isAvailable":true},
+      {"id":"A-19","board":"A","hookNumber":19,"description":"Oficina arquitecto","isAvailable":true},
+      {"id":"A-20","board":"A","hookNumber":20,"description":"Torre de control Varios","isAvailable":true},
+      {"id":"A-21","board":"A","hookNumber":21,"description":"Parrilla","isAvailable":true},
+      {"id":"A-22","board":"A","hookNumber":22,"description":"SALIDA A PLAT. 30","isAvailable":true},
+      {"id":"A-23","board":"A","hookNumber":23,"description":"Marquesina 1 puertas 2 y 3","isAvailable":true},
+      {"id":"A-24","board":"A","hookNumber":24,"description":"Puerta salida a plataforma 9","isAvailable":true},
+      {"id":"A-25","board":"A","hookNumber":25,"description":"Puerta salida a plataforma 19","isAvailable":true},
+      {"id":"A-26","board":"A","hookNumber":26,"description":"Puerta entrada San Juan","isAvailable":true},
+      {"id":"A-27","board":"A","hookNumber":27,"description":"Puertas salida hasta plataforma- entrada hall ferroviario","isAvailable":true},
+      {"id":"A-28","board":"A","hookNumber":28,"description":"Puerta pre embarque 1","isAvailable":true},
+      {"id":"A-29","board":"A","hookNumber":29,"description":"Puerta pre embarque 2","isAvailable":true},
+      {"id":"A-30","board":"A","hookNumber":30,"description":"Puerta pre embarque 3","isAvailable":true},
+      {"id":"A-31","board":"A","hookNumber":31,"description":"Marquesina 2 puertas 2 y 3","isAvailable":true},
+      {"id":"A-32","board":"A","hookNumber":32,"description":"Policia","isAvailable":true},
+      {"id":"A-33","board":"A","hookNumber":33,"description":"Policia (Entrada patio / Entrada cocina)","isAvailable":true},
+      {"id":"A-34","board":"A","hookNumber":34,"description":"Destacamento llave principal","isAvailable":true},
+      {"id":"A-35","board":"A","hookNumber":35,"description":"Rack 1","isAvailable":true},
+      {"id":"A-36","board":"A","hookNumber":36,"description":"Rack 2","isAvailable":true},
+      {"id":"A-37","board":"A","hookNumber":37,"description":"","isAvailable":true},
+      {"id":"A-38","board":"A","hookNumber":38,"description":"Sala grupo electrógeno","isAvailable":true},
+      {"id":"A-39","board":"A","hookNumber":39,"description":"Tira de servicio (Sala de termicas)","isAvailable":true},
+      {"id":"A-40","board":"A","hookNumber":40,"description":"Escalera al techo","isAvailable":true},
+      {"id":"A-41","board":"A","hookNumber":41,"description":"Sala de Bombas","isAvailable":true},
+      {"id":"A-42","board":"A","hookNumber":42,"description":"Garita Misiones","isAvailable":true},
+      {"id":"A-43","board":"A","hookNumber":43,"description":"Garita Nueva","isAvailable":true},
+      {"id":"A-44","board":"A","hookNumber":44,"description":"Estacionamiento Misiones","isAvailable":true},
+      {"id":"A-45","board":"A","hookNumber":45,"description":"Estacionamiento San Juan","isAvailable":true},
+      {"id":"A-46","board":"A","hookNumber":46,"description":"Reja darsena a estacionamiento","isAvailable":true},
+      {"id":"A-47","board":"A","hookNumber":47,"description":"Calle Francisco Da Pozzo","isAvailable":true},
+      {"id":"A-48","board":"A","hookNumber":48,"description":"Rejas marquesina- Luro tanque","isAvailable":true},
+      {"id":"A-49","board":"A","hookNumber":49,"description":"Luz UTA","isAvailable":true},
+      {"id":"A-50","board":"A","hookNumber":50,"description":"Tapa de gas","isAvailable":true},
+      {"id":"A-51","board":"A","hookNumber":51,"description":"Tapa pilar 9 de Julio","isAvailable":true},
+      {"id":"A-52","board":"A","hookNumber":52,"description":"Puerta tapa calle 25 de Mayo","isAvailable":true},
+      {"id":"A-53","board":"A","hookNumber":53,"description":"Reja Ferrocarril","isAvailable":true},
+      {"id":"A-54","board":"A","hookNumber":54,"description":"Deposito Bol 48-49","isAvailable":true},
+      {"id":"B-1","board":"B","hookNumber":1,"description":"Boletería 29","isAvailable":true},
+      {"id":"B-2","board":"B","hookNumber":2,"description":"Boletería 34","isAvailable":true},
+      {"id":"B-3","board":"B","hookNumber":3,"description":"Boletería 10","isAvailable":true},
+      {"id":"B-4","board":"B","hookNumber":4,"description":"Boletería 23","isAvailable":true},
+      {"id":"B-5","board":"B","hookNumber":5,"description":"Local 24-A","isAvailable":true},
+      {"id":"B-6","board":"B","hookNumber":6,"description":"Local 18-A","isAvailable":true},
+      {"id":"B-7","board":"B","hookNumber":7,"description":"Boletería 44","isAvailable":true},
+      {"id":"B-8","board":"B","hookNumber":8,"description":"Boleterías 1-2-3","isAvailable":true},
+      {"id":"B-9","board":"B","hookNumber":9,"description":"Boletería 24","isAvailable":true},
+      {"id":"B-10","board":"B","hookNumber":10,"description":"Encomiendas 3- B","isAvailable":true},
+      {"id":"B-11","board":"B","hookNumber":11,"description":"Encomiendas 7-8- B","isAvailable":true},
+      {"id":"B-12","board":"B","hookNumber":12,"description":"Reja galpón Luro Entrada","isAvailable":true},
+      {"id":"B-13","board":"B","hookNumber":13,"description":"Pañol mantenimiento- Losa de atrás","isAvailable":true},
+      {"id":"B-14","board":"B","hookNumber":14,"description":"Pañol mantenimiento eléctrico - Jardinería","isAvailable":true},
+      {"id":"B-15","board":"B","hookNumber":15,"description":"Depósito atrás de Balcarce","isAvailable":true},
+      {"id":"B-16","board":"B","hookNumber":16,"description":"Local 20 A-B EX - HAVANNA","isAvailable":true},
+      {"id":"B-17","board":"B","hookNumber":17,"description":"Maggie Local 27/30","isAvailable":true},
+      {"id":"B-18","board":"B","hookNumber":18,"description":"Boletería 46","isAvailable":true},
+      {"id":"B-19","board":"B","hookNumber":19,"description":"Cortina Galpón","isAvailable":true},
+      {"id":"B-20","board":"B","hookNumber":20,"description":"Llave candado canilla Luro","isAvailable":true},
+      {"id":"B-21","board":"B","hookNumber":21,"description":"Local 16 A","isAvailable":true},
+      {"id":"B-22","board":"B","hookNumber":22,"description":"Uta","isAvailable":true},
+      {"id":"B-23","board":"B","hookNumber":23,"description":"Cuarto de limpieza en Baño San Juan","isAvailable":true},
+      {"id":"B-24","board":"B","hookNumber":24,"description":"Puerta cachito","isAvailable":true},
+      {"id":"B-25","board":"B","hookNumber":25,"description":"Depositos elementos electricos","isAvailable":true},
+      {"id":"B-26","board":"B","hookNumber":26,"description":"Tractor","isAvailable":true},
+      {"id":"B-27","board":"B","hookNumber":27,"description":"EX LOCAL MALETEROS","isAvailable":true},
+      {"id":"B-28","board":"B","hookNumber":28,"description":"Archivo","isAvailable":true},
+      {"id":"B-29","board":"B","hookNumber":29,"description":"Archivo Nuevo","isAvailable":true},
+      {"id":"B-30","board":"B","hookNumber":30,"description":"Local 15-16 b","isAvailable":true},
+      {"id":"B-31","board":"B","hookNumber":31,"description":"Local 14-A","isAvailable":true},
+      {"id":"B-32","board":"B","hookNumber":32,"description":"Porton curvita","isAvailable":true},
+      {"id":"B-33","board":"B","hookNumber":33,"description":"Reja Vestuario","isAvailable":true},
+      {"id":"B-34","board":"B","hookNumber":34,"description":"Vias curva chaco","isAvailable":true},
+      {"id":"B-35","board":"B","hookNumber":35,"description":"Boletería 17-18","isAvailable":true},
+      {"id":"B-36","board":"B","hookNumber":36,"description":"Maquina productos baño 4 san juan","isAvailable":true},
+      {"id":"B-37","board":"B","hookNumber":37,"description":"Maquina productos baño 5 misiones","isAvailable":true},
+      {"id":"B-38","board":"B","hookNumber":38,"description":"Oficina Bares y Kioscos","isAvailable":true},
+      {"id":"B-39","board":"B","hookNumber":39,"description":"Reja al lado de administración","isAvailable":true},
+      {"id":"B-40","board":"B","hookNumber":40,"description":"Candado silla de ruedas","isAvailable":true},
+      {"id":"B-41","board":"B","hookNumber":41,"description":"","isAvailable":true},
+      {"id":"B-42","board":"B","hookNumber":42,"description":"Candado puerta de encomiendas","isAvailable":true},
+      {"id":"B-43","board":"B","hookNumber":43,"description":"","isAvailable":true},
+      {"id":"B-44","board":"B","hookNumber":44,"description":"Enfermería","isAvailable":true},
+      {"id":"B-45","board":"B","hookNumber":45,"description":"","isAvailable":true},
+      {"id":"B-46","board":"B","hookNumber":46,"description":"Estacionamiento San Juan barrera","isAvailable":true},
+      {"id":"B-47","board":"B","hookNumber":47,"description":"","isAvailable":true},
+      {"id":"B-48","board":"B","hookNumber":48,"description":"","isAvailable":true},
+      {"id":"B-49","board":"B","hookNumber":49,"description":"Tranquera","isAvailable":true},
+      {"id":"B-50","board":"B","hookNumber":50,"description":"Local 22-A","isAvailable":true},
+      {"id":"B-51","board":"B","hookNumber":51,"description":"Local 31-B","isAvailable":true},
+      {"id":"B-52","board":"B","hookNumber":52,"description":"Boletería 45","isAvailable":true},
+      {"id":"B-53","board":"B","hookNumber":53,"description":"Puerta de atrás puesto de diarios","isAvailable":true},
+      {"id":"B-54","board":"B","hookNumber":54,"description":"Depósito Gastronomia","isAvailable":true}
+    ];
+
+    const STORAGE_KEY = 'control_llaves_offline_data';
+    let keys = [];
+    let fileHandle = null;
+
+    function init() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          keys = JSON.parse(stored);
+        } else {
+          keys = INITIAL_DATA;
+          saveDataLocally();
+        }
+      } catch (e) {
+        keys = INITIAL_DATA;
+      }
+      renderAll();
+      setupEvents();
+      setupDragAndDrop();
+    }
+
+    function saveDataLocally() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
+        if (fileHandle) {
+          saveToFileHandle();
+        }
+      } catch (e) {
+        console.error('Error saving data:', e);
+      }
+    }
+
+    async function linkLocalJsonFile() {
+      if ('showOpenFilePicker' in window) {
+        try {
+          const [handle] = await window.showOpenFilePicker({
+            types: [{ description: 'Archivo JSON', accept: { 'application/json': ['.json'] } }],
+            multiple: false
+          });
+          fileHandle = handle;
+          const file = await handle.getFile();
+          const text = await file.text();
+          const parsed = JSON.parse(text);
+          if (Array.isArray(parsed)) {
+            keys = parsed;
+            saveDataLocally();
+            renderAll();
+            document.getElementById('syncStatusText').textContent = '🟢 Vinculado a: ' + handle.name + ' (Guardado directo activado)';
+            alert('¡Archivo vinculado con éxito! Los cambios se guardarán automáticamente en ' + handle.name);
+          }
+        } catch (err) {
+          if (err.name !== 'AbortError') alert('Error al vincular: ' + err.message);
+        }
+      } else {
+        alert('Para vincular archivos directamente use Google Chrome o Microsoft Edge.');
+      }
+    }
+
+    async function saveToFileHandle() {
+      if (!fileHandle) return false;
+      try {
+        const writable = await fileHandle.createWritable();
+        await writable.write(JSON.stringify(keys, null, 2));
+        await writable.close();
+        return true;
+      } catch (e) {
+        console.error('Error writing to file handle:', e);
+        return false;
+      }
+    }
+
+    async function saveDirectToFileOrDownload() {
+      if (fileHandle) {
+        const ok = await saveToFileHandle();
+        if (ok) {
+          alert('¡Inventario guardado directamente en ' + fileHandle.name + '!');
+          return;
+        }
+      }
+
+      if ('showSaveFilePicker' in window) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: 'inventario_llaves.json',
+            types: [{ description: 'Archivo de Inventario JSON', accept: { 'application/json': ['.json'] } }]
+          });
+          fileHandle = handle;
+          await saveToFileHandle();
+          document.getElementById('syncStatusText').textContent = '🟢 Vinculado a: ' + handle.name;
+          alert('¡Guardado exitoso en ' + handle.name + '!');
+          return;
+        } catch (e) {
+          if (e.name === 'AbortError') return;
+        }
+      }
+
+      // Fallback
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(keys, null, 2));
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = 'inventario_llaves.json';
+      a.click();
+    }
+
+    function downloadSelfUpdatedHtml() {
+      const currentHtml = document.documentElement.outerHTML;
+      const updatedHtml = currentHtml.replace(/const INITIAL_DATA = \\[.*?\\];/s, 'const INITIAL_DATA = ' + JSON.stringify(keys) + ';');
+      const blob = new Blob([updatedHtml], { type: 'text/html;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Control_de_Llaves_OFFLINE_' + new Date().toISOString().slice(0,10) + '.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function setupDragAndDrop() {
+      const overlay = document.getElementById('dropOverlay');
+      window.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        overlay.classList.add('active');
+      });
+      window.addEventListener('dragleave', (e) => {
+        if (e.relatedTarget === null) overlay.classList.remove('active');
+      });
+      window.addEventListener('drop', (e) => {
+        e.preventDefault();
+        overlay.classList.remove('active');
+        const file = e.dataTransfer.files[0];
+        if (file && file.name.endsWith('.json')) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            try {
+              const parsed = JSON.parse(event.target.result);
+              if (Array.isArray(parsed)) {
+                keys = parsed;
+                saveDataLocally();
+                renderAll();
+                alert('¡Inventario cargado desde ' + file.name + ' con éxito!');
+              }
+            } catch (err) {
+              alert('Error al leer el archivo JSON.');
+            }
+          };
+          reader.readAsText(file);
+        }
+      });
+    }
+
+    function handleFileImport(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const parsed = JSON.parse(event.target.result);
+            if (Array.isArray(parsed)) {
+              keys = parsed;
+              saveDataLocally();
+              renderAll();
+              alert('¡Inventario cargado con éxito!');
+            }
+          } catch (err) {
+            alert('Error al leer el archivo JSON.');
+          }
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    function openSyncHelpModal() {
+      document.getElementById('syncHelpModal').classList.add('active');
+    }
+    function closeSyncHelpModal() {
+      document.getElementById('syncHelpModal').classList.remove('active');
+    }
+
+    function setupEvents() {
+      const searchInput = document.getElementById('searchInput');
+      const searchClear = document.getElementById('searchClear');
+
+      searchInput.addEventListener('input', (e) => {
+        const q = e.target.value.trim();
+        searchClear.style.display = q ? 'block' : 'none';
+        performSearch(q);
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '/' && document.activeElement !== searchInput) {
+          e.preventDefault();
+          searchInput.focus();
+          searchInput.select();
+        }
+      });
+    }
+
+    function clearSearch() {
+      const searchInput = document.getElementById('searchInput');
+      searchInput.value = '';
+      document.getElementById('searchClear').style.display = 'none';
+      performSearch('');
+      searchInput.focus();
+    }
+
+    function setSearchFilter(text) {
+      const searchInput = document.getElementById('searchInput');
+      searchInput.value = text;
+      document.getElementById('searchClear').style.display = text ? 'block' : 'none';
+      performSearch(text);
+      searchInput.focus();
+    }
+
+    function highlightText(text, query) {
+      if (!query) return text;
+      const regex = new RegExp('(' + query.replace(/[-\\/\\\\^$*+?.()|[\\]{}]/g, '\\\\$&') + ')', 'gi');
+      return text.replace(regex, '<span class="highlight">$1</span>');
+    }
+
+    function performSearch(query) {
+      const resultsGrid = document.getElementById('resultsGrid');
+      const resultsCount = document.getElementById('resultsCount');
+
+      if (!query) {
+        resultsGrid.innerHTML = '';
+        resultsCount.textContent = 'Ingrese una búsqueda arriba para ver los resultados al instante.';
+        return;
+      }
+
+      const qLower = query.toLowerCase();
+      const filtered = keys.filter(k => {
+        if (!k.description) return false;
+        const code = k.hookNumber + '-' + k.board;
+        return k.description.toLowerCase().includes(qLower) || 
+               code.toLowerCase().includes(qLower) ||
+               String(k.hookNumber) === qLower;
+      });
+
+      resultsCount.textContent = filtered.length + ' resultado(s) para "' + query + '"';
+
+      if (filtered.length === 0) {
+        resultsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 2rem; color: #94a3b8;">No se encontró ninguna llave con ese criterio.</div>';
+        return;
+      }
+
+      resultsGrid.innerHTML = filtered.map(k => {
+        const code = k.hookNumber + '-' + k.board;
+        const boardClass = k.board === 'A' ? 'badge-a' : 'badge-b';
+        return `
+          <div class="result-card" onclick="locateKey('${k.board}', ${k.hookNumber})">
+            <div class="result-left">
+              <div class="badge-code ${boardClass}">${code}</div>
+              <div class="result-info">
+                <div class="result-desc">${highlightText(k.description, query)}</div>
+                <div class="result-meta">Tablero ${k.board} • Gancho ${k.hookNumber}</div>
+              </div>
+            </div>
+            <button class="btn" style="padding: 0.35rem 0.6rem; font-size: 0.75rem;" onclick="event.stopPropagation(); editKey('${k.id}')">✏️</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAll() {
+      renderBoard('A', document.getElementById('tableA_body'));
+      renderBoard('B', document.getElementById('tableB_body'));
+      renderAdminTable();
+      const searchVal = document.getElementById('searchInput').value.trim();
+      if (searchVal) performSearch(searchVal);
+    }
+
+    function renderBoard(boardLetter, tbody) {
+      const boardKeys = keys.filter(k => k.board === boardLetter).sort((a,b) => a.hookNumber - b.hookNumber);
+      
+      tbody.innerHTML = boardKeys.map(k => {
+        const isEmpty = !k.description || !k.description.trim();
+        const descClass = isEmpty ? 'empty-desc' : 'desc-text';
+        const displayDesc = isEmpty ? '(Libre / Vacío)' : k.description;
+        return `
+          <tr id="row-${k.board}-${k.hookNumber}" onclick="editKey('${k.id}')">
+            <td class="hook-num">${k.hookNumber}</td>
+            <td class="${descClass}">${displayDesc}</td>
+            <td><button class="btn" style="padding:0.2rem 0.5rem;font-size:0.75rem;" onclick="event.stopPropagation(); editKey('${k.id}')">Editar</button></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('adminTableBody');
+      const sorted = [...keys].sort((a,b) => (a.board === b.board ? a.hookNumber - b.hookNumber : a.board.localeCompare(b.board)));
+      tbody.innerHTML = sorted.map(k => `
+        <tr>
+          <td><span class="badge-code ${k.board === 'A' ? 'badge-a' : 'badge-b'}" style="font-size:0.85rem;padding:0.2rem 0.4rem;">${k.hookNumber}-${k.board}</span></td>
+          <td>Tablero ${k.board}</td>
+          <td>Gancho ${k.hookNumber}</td>
+          <td style="font-weight:600;">${k.description || '<span style="color:#64748b;">(Vacío)</span>'}</td>
+          <td>
+            <button class="btn" style="padding:0.25rem 0.5rem;font-size:0.8rem;" onclick="editKey('${k.id}')">✏️ Editar</button>
+            <button class="btn btn-danger" style="padding:0.25rem 0.5rem;font-size:0.8rem;" onclick="clearKeyContent('${k.id}')">🗑️ Vaciar</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function locateKey(board, hook) {
+      switchView('boards');
+      const row = document.getElementById('row-' + board + '-' + hook);
+      if (row) {
+        document.querySelectorAll('tr.highlighted').forEach(el => el.classList.remove('highlighted'));
+        row.classList.add('highlighted');
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function switchView(view) {
+      document.getElementById('viewBoards').style.display = view === 'boards' ? 'grid' : 'none';
+      document.getElementById('viewAdmin').style.display = view === 'admin' ? 'block' : 'none';
+      document.getElementById('tabBoardsBtn').classList.toggle('active', view === 'boards');
+      document.getElementById('tabAdminBtn').classList.toggle('active', view === 'admin');
+    }
+
+    function editKey(id) {
+      const key = keys.find(k => k.id === id);
+      if (!key) return;
+      document.getElementById('modalTitle').textContent = 'Editar Llave: ' + key.hookNumber + '-' + key.board;
+      document.getElementById('formKeyId').value = key.id;
+      document.getElementById('formBoard').value = key.board;
+      document.getElementById('formHook').value = key.hookNumber;
+      document.getElementById('formDesc').value = key.description || '';
+      document.getElementById('keyModal').classList.add('active');
+    }
+
+    function openNewKeyModal() {
+      document.getElementById('modalTitle').textContent = 'Registrar Nueva Llave';
+      document.getElementById('formKeyId').value = '';
+      document.getElementById('formBoard').value = 'A';
+      document.getElementById('formHook').value = '';
+      document.getElementById('formDesc').value = '';
+      document.getElementById('keyModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('keyModal').classList.remove('active');
+    }
+
+    function saveKeyForm(e) {
+      e.preventDefault();
+      const id = document.getElementById('formKeyId').value;
+      const board = document.getElementById('formBoard').value;
+      const hookNumber = Number(document.getElementById('formHook').value);
+      const description = document.getElementById('formDesc').value.trim();
+
+      if (id) {
+        const item = keys.find(k => k.id === id);
+        if (item) {
+          item.board = board;
+          item.hookNumber = hookNumber;
+          item.description = description;
+        }
+      } else {
+        const newId = board + '-' + hookNumber + '-' + Date.now();
+        keys.push({ id: newId, board, hookNumber, description, isAvailable: true });
+      }
+
+      saveDataLocally();
+      renderAll();
+      closeModal();
+    }
+
+    function clearKeyContent(id) {
+      if (confirm('¿Desea vaciar la descripción de este gancho?')) {
+        const item = keys.find(k => k.id === id);
+        if (item) {
+          item.description = '';
+          saveDataLocally();
+          renderAll();
+        }
+      }
+    }
+
+    function resetToDefaults() {
+      if (confirm('¿Restablecer todo el inventario al listado original de la planilla?')) {
+        keys = JSON.parse(JSON.stringify(INITIAL_DATA));
+        saveDataLocally();
+        renderAll();
+        alert('Inventario restablecido con éxito.');
+      }
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

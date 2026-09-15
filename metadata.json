@@ -1,0 +1,6 @@
+{
+  "name": "Control de Llaves - Tableros 1 y 2",
+  "description": "Buscador predictivo y administrador de inventario de llaves para Tableros A y B con ubicación por gancho y exportación offline.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

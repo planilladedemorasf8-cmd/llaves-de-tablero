@@ -1,0 +1,58 @@
+================================================================================
+          INSTRUCCIONES DE USO OFFLINE Y SINCRONIZACIÓN MULTI-PC
+          CONTROL DE LLAVES - TABLEROS 1 Y 2 (GANCHOS A Y B)
+================================================================================
+
+Este sistema funciona 100% offline (sin conexión a internet) y no requiere 
+instalaciones complejas ni servidores.
+
+--------------------------------------------------------------------------------
+ARCHIVOS PRINCIPALES EN ESTA CARPETA:
+--------------------------------------------------------------------------------
+1. "Control_de_Llaves_OFFLINE.html" -> La aplicación completa (abrir con doble clic).
+2. "inventario_llaves.json"          -> Archivo con la base de datos de todas las llaves.
+
+--------------------------------------------------------------------------------
+FORMA B: VINCULACIÓN DIRECTA AL ARCHIVO JSON (EN CHROME O EDGE)
+--------------------------------------------------------------------------------
+Esta función permite que cada cambio, nueva llave o préstamo se guarde 
+DIRECTAMENTE en el archivo "inventario_llaves.json" en tu carpeta o pendrive.
+
+PASO A PASO:
+1. Abre "Control_de_Llaves_OFFLINE.html" con Google Chrome o Microsoft Edge.
+2. En la barra superior azul, haz clic en el botón:
+   👉 "🔗 Vincular inventario_llaves.json"
+3. Selecciona el archivo "inventario_llaves.json" que está en esta carpeta.
+4. El navegador te preguntará: "¿Desea permitir que este archivo guarde cambios?". 
+   Haz clic en "Guardar cambios" / "Permitir".
+5. ¡Listo! Verás el indicador verde "🟢 Vinculado a: inventario_llaves.json".
+   A partir de ese momento, cada vez que agregues, edites o vacíes un gancho, 
+   se guardará automáticamente en el archivo en tu disco o pendrive.
+
+--------------------------------------------------------------------------------
+¿CÓMO LLEVAR Y USAR EN OTRA COMPUTADORA?
+--------------------------------------------------------------------------------
+1. Copia la carpeta (con ambos archivos) a un pendrive o carpeta de red compartida.
+2. En la otra computadora, abre "Control_de_Llaves_OFFLINE.html".
+3. Tienes dos formas instantáneas de cargar los datos actualizados:
+   - Opción Rápida: Arrastra y suelta el archivo "inventario_llaves.json" 
+     directamente sobre la ventana del navegador.
+   - Opción Menú: Haz clic en "📂 Cargar JSON" y selecciona el archivo.
+4. Si vas a seguir editando en esa computadora, vuelve a hacer clic en 
+   "🔗 Vincular inventario_llaves.json" para que siga guardando directamente.
+
+--------------------------------------------------------------------------------
+RESUMEN PRÁCTICO
+--------------------------------------------------------------------------------
+• Para el día a día en una sola PC: 
+  Abre "Control_de_Llaves_OFFLINE.html" con doble clic y busca llaves por nombre, 
+  número de gancho o código (ej. "29", "Boletería", "Pañol", "Baño", "1-B").
+
+• Para respaldar o llevar los cambios a otra PC:
+  - Método Vinculado (Forma B): Los cambios ya están en "inventario_llaves.json".
+  - Método Rápido (Forma A): Haz clic en "⬇️ Guardar .HTML Actualizado" para 
+    descargar un único archivo que contiene todo listo para abrir en cualquier lado.
+
+• Si alguna vez quieres volver al listado de fábrica:
+  Haz clic en el botón "🔄 Reiniciar Original" en la barra superior.
+================================================================================
