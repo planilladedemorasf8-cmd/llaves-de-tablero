@@ -684,7 +684,7 @@
               style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#fbbf24;box-shadow:0 0 6px #fbbf24;"></span>
             <span id="cloudStatusText">☁️ Nube Multi-PC</span>
           </button>
-          <button class="btn" onclick="openSettingsModal()" title="Cambiar usuario o contraseña"
+          <button type="button" class="btn" id="btnOpenSettings" onclick="openSettingsModal()" title="Cambiar usuario o contraseña"
             style="background:#1e293b;border-color:#475569;">
             ⚙️ Ajustes
           </button>
@@ -1087,8 +1087,9 @@
       const userHash = await sha256(user);
       const passHash = await sha256(pass);
 
-      if (userHash === AUTH_USER_HASH && passHash === AUTH_PASS_HASH) {
+      if (userHash === getActiveUserHash() && passHash === getActivePassHash()) {
         sessionStorage.setItem(AUTH_STORAGE_KEY, 'true');
+        sessionStorage.setItem('control_llaves_logged_user', user);
         errEl.style.display = 'none';
         checkAuth();
         init();
@@ -1110,6 +1111,139 @@
         if (userInput) userInput.value = '';
         if (passInput) passInput.value = '';
         checkAuth();
+      }
+    }
+
+    const AUTH_STORAGE_USER_HASH = 'control_llaves_user_hash';
+    const AUTH_STORAGE_PASS_HASH = 'control_llaves_pass_hash';
+
+    function getActiveUserHash() {
+      return localStorage.getItem(AUTH_STORAGE_USER_HASH) || AUTH_USER_HASH;
+    }
+
+    function getActivePassHash() {
+      return localStorage.getItem(AUTH_STORAGE_PASS_HASH) || AUTH_PASS_HASH;
+    }
+
+    function openSettingsModal() {
+      const modal = document.getElementById('settingsModal');
+      const userInput = document.getElementById('settingNewUser');
+      const passInput = document.getElementById('settingNewPass');
+      const confirmInput = document.getElementById('settingConfirmPass');
+      const feedback = document.getElementById('settingsFeedback');
+      
+      if (userInput) userInput.value = sessionStorage.getItem('control_llaves_logged_user') || 'admin';
+      if (passInput) passInput.value = '';
+      if (confirmInput) confirmInput.value = '';
+      if (feedback) { feedback.style.display = 'none'; feedback.textContent = ''; }
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeSettingsModal() {
+      const modal = document.getElementById('settingsModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    // Exponer globalmente para evitar cualquier problema de scope
+    window.openSettingsModal = openSettingsModal;
+    window.closeSettingsModal = closeSettingsModal;
+
+    // Cerrar modales al hacer clic fuera del recuadro o presionar Escape
+    window.addEventListener('click', (e) => {
+      if (e.target && e.target.classList && e.target.classList.contains('modal-overlay')) {
+        e.target.classList.remove('active');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+      }
+    });
+
+    async function saveNewSecurityCredentials(e) {
+      e.preventDefault();
+      const newUser = document.getElementById('settingNewUser').value.trim();
+      const newPass = document.getElementById('settingNewPass').value.trim();
+      const confirmPass = document.getElementById('settingConfirmPass').value.trim();
+      const feedback = document.getElementById('settingsFeedback');
+      const btn = document.getElementById('btnSaveSettings');
+
+      if (!newUser) {
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.color = '#fca5a5';
+        feedback.textContent = '❌ El usuario no puede estar vacío.';
+        return;
+      }
+
+      if (newPass.length < 4) {
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.color = '#fca5a5';
+        feedback.textContent = '❌ La contraseña debe tener al menos 4 caracteres.';
+        return;
+      }
+
+      if (newPass !== confirmPass) {
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.color = '#fca5a5';
+        feedback.textContent = '❌ Las nuevas contraseñas no coinciden.';
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Guardando...';
+      }
+
+      try {
+        const userHash = await sha256(newUser);
+        const passHash = await sha256(newPass);
+
+        // 1. Guardar en memoria local de esta PC
+        localStorage.setItem(AUTH_STORAGE_USER_HASH, userHash);
+        localStorage.setItem(AUTH_STORAGE_PASS_HASH, passHash);
+        sessionStorage.setItem('control_llaves_logged_user', newUser);
+
+        // 2. Si hay Firebase conectado, sincronizar en la nube para las otras PCs
+        const baseUrl = getCloudUrl();
+        if (baseUrl) {
+          try {
+            const targetUrl = baseUrl.replace(/\/+$/, '') + '/auth.json';
+            await fetch(targetUrl, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userHash, passHash, updatedAt: new Date().toISOString() })
+            });
+          } catch(cloudErr) {
+            console.warn('No se pudo sincronizar clave en Firebase:', cloudErr);
+          }
+        }
+
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.color = '#34d399';
+        feedback.textContent = '✅ ¡Usuario y contraseña actualizados con éxito!';
+
+        setTimeout(() => {
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = '💾 Guardar Cambios';
+          }
+          closeSettingsModal();
+        }, 1500);
+
+      } catch(err) {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '💾 Guardar Cambios';
+        }
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.color = '#fca5a5';
+        feedback.textContent = '❌ Error: ' + err.message;
       }
     }
 
