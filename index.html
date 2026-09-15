@@ -107,11 +107,123 @@
     .form-input:focus { outline: none; border-color: #3b82f6; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.25rem; }
     
-    .drop-overlay { position: fixed; inset: 0; background: rgba(30, 58, 138, 0.85); border: 4px dashed #60a5fa; z-index: 999; display: none; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: white; pointer-events: none; }
-    .drop-overlay.active { display: flex; }
+    /* Login Screen */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .login-card {
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 20px;
+      padding: 2.25rem 2rem;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(59, 130, 246, 0.15);
+      animation: fadeInLogin 0.3s ease-out;
+    }
+    @keyframes fadeInLogin {
+      from { opacity: 0; transform: scale(0.96) translateY(-10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .login-icon {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 1.25rem;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+    }
+    .login-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+    .login-subtitle {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+    .login-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-size: 0.825rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      font-weight: 500;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
+
+  <!-- LOGIN SCREEN (PANTALLA DE ACCESO) -->
+  <div id="loginScreen" class="login-overlay">
+    <div class="login-card">
+      <div class="login-icon">
+        🔑
+      </div>
+      <h2 class="login-title">CONTROL DE LLAVES</h2>
+      <p class="login-subtitle">Acceso seguro a los Tableros 1 y 2</p>
+
+      <form id="loginForm" onsubmit="handleLogin(event)" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+        <div class="form-group" style="text-align: left;">
+          <label class="form-label" for="loginUser">Usuario</label>
+          <input 
+            type="text" 
+            id="loginUser" 
+            class="form-input" 
+            placeholder="Ingrese su usuario" 
+            required 
+            autocomplete="username"
+            autofocus
+          >
+        </div>
+
+        <div class="form-group" style="text-align: left;">
+          <label class="form-label" for="loginPass">Contraseña</label>
+          <input 
+            type="password" 
+            id="loginPass" 
+            class="form-input" 
+            placeholder="••••••••" 
+            required 
+            autocomplete="current-password"
+          >
+        </div>
+
+        <div id="loginError" class="login-error" style="display: none;">
+          ⚠️ Usuario o contraseña incorrectos.
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.95rem; margin-top: 0.35rem; font-weight: 700;">
+          Iniciar Sesión
+        </button>
+      </form>
+      
+      <p style="font-size: 0.75rem; color: #64748b; margin-top: 1.5rem;">
+        Tableros 1 y 2 (A y B) • Sistema Protegido
+      </p>
+    </div>
+  </div>
+
+  <!-- APP CONTAINER -->
+  <div id="appContainer" style="display: none;">
 
   <header>
     <div class="header-content">
@@ -125,6 +237,9 @@
           <span id="cloudStatusText">☁️ Nube Multi-PC</span>
         </button>
         <button class="btn btn-primary" onclick="openNewKeyModal()">➕ Nueva Llave</button>
+        <button class="btn" onclick="handleLogout()" title="Cerrar sesión en este dispositivo" style="background:#334155;border-color:#475569;">
+          🔒 Salir
+        </button>
       </div>
     </div>
   </header>
@@ -297,6 +412,7 @@
       </div>
     </div>
   </div>
+  </div> <!-- /appContainer -->
 
   <script>
     const INITIAL_DATA = [
@@ -409,6 +525,62 @@
       {"id":"B-53","board":"B","hookNumber":53,"description":"Puerta de atrás puesto de diarios","isAvailable":true},
       {"id":"B-54","board":"B","hookNumber":54,"description":"Depósito Gastronomia","isAvailable":true}
     ];
+
+    // ========================================================
+    // USUARIO Y CONTRASEÑA DE ACCESO
+    // Puedes cambiarlos aquí cuando lo desees:
+    // ========================================================
+    const AUTH_USER = 'admin';
+    const AUTH_PASS = 'llaves123';
+    const AUTH_STORAGE_KEY = 'control_llaves_session_active';
+
+    function checkAuth() {
+      const isAuth = sessionStorage.getItem(AUTH_STORAGE_KEY) === 'true';
+      const loginScreen = document.getElementById('loginScreen');
+      const appContainer = document.getElementById('appContainer');
+
+      if (isAuth) {
+        if (loginScreen) loginScreen.style.display = 'none';
+        if (appContainer) appContainer.style.display = 'block';
+        return true;
+      } else {
+        if (loginScreen) loginScreen.style.display = 'flex';
+        if (appContainer) appContainer.style.display = 'none';
+        return false;
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value.trim();
+      const errEl = document.getElementById('loginError');
+
+      if (user === AUTH_USER && pass === AUTH_PASS) {
+        sessionStorage.setItem(AUTH_STORAGE_KEY, 'true');
+        errEl.style.display = 'none';
+        checkAuth();
+        init();
+      } else {
+        errEl.style.display = 'block';
+        const passInput = document.getElementById('loginPass');
+        if (passInput) {
+          passInput.value = '';
+          passInput.focus();
+        }
+      }
+    }
+
+    function handleLogout() {
+      if (confirm('¿Cerrar sesión en este dispositivo?')) {
+        sessionStorage.removeItem(AUTH_STORAGE_KEY);
+        const userInput = document.getElementById('loginUser');
+        const passInput = document.getElementById('loginPass');
+        if (userInput) userInput.value = '';
+        if (passInput) passInput.value = '';
+        checkAuth();
+      }
+    }
 
     const STORAGE_KEY = 'control_llaves_offline_data';
     const CLOUD_DB_KEY = 'control_llaves_cloud_url';
@@ -827,7 +999,11 @@
       }
     }
 
-    window.onload = init;
+    window.onload = () => {
+      if (checkAuth()) {
+        init();
+      }
+    };
   </script>
 </body>
 </html>
