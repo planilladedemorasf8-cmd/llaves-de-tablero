@@ -112,7 +112,6 @@
   </style>
 </head>
 <body>
-  <div id="dropOverlay" class="drop-overlay">📥 Suelte aquí el archivo "inventario_llaves.json" para cargarlo</div>
 
   <header>
     <div class="header-content">
@@ -121,6 +120,10 @@
         <p>Tableros 1 y 2 (A y B) • Buscador predictivo e inventario</p>
       </div>
       <div class="header-actions">
+        <button class="btn" id="cloudStatusBtn" onclick="openCloudModal()" title="Sincronización en la nube entre múltiples PCs" style="background:#1e293b;border-color:#3b82f6;">
+          <span id="cloudStatusDot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#fbbf24;box-shadow:0 0 6px #fbbf24;"></span>
+          <span id="cloudStatusText">☁️ Nube Multi-PC</span>
+        </button>
         <button class="btn btn-primary" onclick="openNewKeyModal()">➕ Nueva Llave</button>
       </div>
     </div>
@@ -248,34 +251,49 @@
     </div>
   </div>
 
-  <!-- MODAL MULTI-PC SYNC HELP -->
-  <div id="syncHelpModal" class="modal-overlay">
-    <div class="modal" style="max-width: 650px;">
+  <!-- MODAL CLOUD CONFIG (MULTI-PC) -->
+  <div id="cloudModal" class="modal-overlay">
+    <div class="modal" style="max-width: 600px;">
       <div class="modal-title">
-        <span>📁 Guardado en Carpeta y Uso en Varias Computadoras</span>
-        <button onclick="closeSyncHelpModal()" style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">✕</button>
+        <span>☁️ Sincronización Multi-PC en Tiempo Real</span>
+        <button onclick="closeCloudModal()" style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">✕</button>
       </div>
-      <div style="font-size:0.875rem; color:#cbd5e1; line-height:1.6; display:flex; flex-direction:column; gap:1rem;">
+      <div style="font-size:0.875rem; color:#cbd5e1; line-height:1.6; display:flex; flex-direction:column; gap:0.9rem;">
+        <p>
+          GitHub Pages guarda los datos en la memoria local de cada navegador (<code style="background:#0f172a;padding:0.15rem 0.35rem;border-radius:4px;color:#93c5fd;">localStorage</code>). Para que <strong>todas las computadoras compartan las mismas llaves y cambios en tiempo real</strong>, conecta una base de datos gratuita en la nube con <strong>Firebase Realtime Database</strong>.
+        </p>
+
         <div style="background:#0f172a; padding:1rem; border-radius:8px; border:1px solid #3b82f6;">
-          <strong style="color:#60a5fa; font-size:0.95rem;">Opción 1 (La más fácil): Archivo .HTML Actualizado</strong>
-          <p style="margin-top:0.3rem;">
-            Cada vez que modifique llaves, haga clic en <strong>"⬇️ Guardar .HTML Actualizado"</strong>. Ese único archivo contiene toda la app con los nuevos datos incrustados. Cópielo a un pendrive o carpeta compartida y ábralo en cualquier computadora con doble clic.
-          </p>
+          <label style="display:block; font-weight:700; font-size:0.85rem; margin-bottom:0.4rem; color:#93c5fd;">
+            URL de tu Firebase Realtime Database:
+          </label>
+          <input 
+            type="url" 
+            id="cloudDbUrlInput" 
+            class="form-input" 
+            placeholder="https://tu-proyecto-default-rtdb.firebaseio.com"
+            style="width:100%; font-family:monospace; font-size:0.85rem;"
+          >
+          <div id="cloudTestFeedback" style="margin-top:0.5rem; font-size:0.8rem; font-weight:600;"></div>
         </div>
 
-        <div style="background:#0f172a; padding:1rem; border-radius:8px; border:1px solid #10b981;">
-          <strong style="color:#34d399; font-size:0.95rem;">Opción 2: Archivo "inventario_llaves.json" en la Carpeta</strong>
-          <p style="margin-top:0.3rem;">
-            Guarde <strong>inventario_llaves.json</strong> en la misma carpeta que este archivo .HTML o en un pendrive:
-          </p>
-          <ul style="margin-left:1.25rem; margin-top:0.4rem; font-size:0.825rem;">
-            <li>En Google Chrome o Microsoft Edge, haga clic en <strong>"🔗 Vincular inventario_llaves.json"</strong> para que guarde directamente en el archivo en disco.</li>
-            <li>En cualquier otra PC, simplemente <strong>arrastre el archivo .json sobre esta ventana</strong> para cargar las llaves al instante.</li>
-          </ul>
+        <div style="background:#1e293b; padding:0.85rem; border-radius:8px; font-size:0.8rem; color:#94a3b8; border:1px solid #334155;">
+          <strong style="color:#e2e8f0; display:block; margin-bottom:0.3rem;">📋 ¿Cómo crear tu base de datos gratis en 2 minutos?</strong>
+          <ol style="margin-left:1.2rem; display:flex; flex-direction:column; gap:0.25rem;">
+            <li>Entra a <a href="https://console.firebase.google.com" target="_blank" style="color:#60a5fa; text-decoration:underline;">console.firebase.google.com</a> con tu cuenta Google y crea un proyecto.</li>
+            <li>En el menú ve a <strong>Compilación &gt; Realtime Database</strong> y haz clic en <strong>Crear base de datos</strong>.</li>
+            <li>En Reglas selecciona <strong>"Comenzar en modo de prueba"</strong> (permite lectura y escritura).</li>
+            <li>Copia la URL que aparece arriba (terminada en <code style="color:#93c5fd;">.firebaseio.com</code>), pégala aquí y guarda.</li>
+          </ol>
         </div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-primary" onclick="closeSyncHelpModal()">Entendido</button>
+
+        <div class="modal-actions" style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
+          <button type="button" class="btn" style="color:#f87171;" onclick="clearCloudConfig()">Desconectar</button>
+          <div style="display:flex; gap:0.5rem;">
+            <button type="button" class="btn" onclick="testCloudConnection()">🔍 Probar Conexión</button>
+            <button type="button" class="btn btn-primary" onclick="saveCloudConfig()">💾 Guardar y Conectar</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -393,180 +411,208 @@
     ];
 
     const STORAGE_KEY = 'control_llaves_offline_data';
-    let keys = [];
-    let fileHandle = null;
+    const CLOUD_DB_KEY = 'control_llaves_cloud_url';
+    
+    // Pega aquí la URL de tu Firebase Realtime Database para que TODAS las computadoras
+    // se sincronicen solas desde GitHub sin necesidad de configurar nada en cada PC:
+    const DEFAULT_CLOUD_URL = 'https://controldellaves-default-rtdb.firebaseio.com';
 
-    function init() {
+    let keys = [];
+
+    function getCloudUrl() {
+      const stored = localStorage.getItem(CLOUD_DB_KEY);
+      const url = (stored && stored.trim()) || DEFAULT_CLOUD_URL;
+      return url ? url.trim().replace(/\/+$/, '') : '';
+    }
+
+    function updateCloudStatus(status) {
+      const dot = document.getElementById('cloudStatusDot');
+      const text = document.getElementById('cloudStatusText');
+      if (!dot || !text) return;
+
+      if (status === 'connected') {
+        dot.style.background = '#10b981';
+        dot.style.boxShadow = '0 0 8px #10b981';
+        text.textContent = '🟢 Nube Conectada';
+      } else if (status === 'syncing') {
+        dot.style.background = '#38bdf8';
+        dot.style.boxShadow = '0 0 8px #38bdf8';
+        text.textContent = '🔄 Sincronizando...';
+      } else if (status === 'error') {
+        dot.style.background = '#ef4444';
+        dot.style.boxShadow = '0 0 8px #ef4444';
+        text.textContent = '⚠️ Error de Nube';
+      } else {
+        dot.style.background = '#fbbf24';
+        dot.style.boxShadow = '0 0 8px #fbbf24';
+        text.textContent = '☁️ Nube Multi-PC';
+      }
+    }
+
+    async function fetchFromCloud(silent = false) {
+      const baseUrl = getCloudUrl();
+      if (!baseUrl) {
+        updateCloudStatus('local');
+        return false;
+      }
+
+      if (!silent) updateCloudStatus('syncing');
+
+      try {
+        const targetUrl = baseUrl.endsWith('.json') ? baseUrl : baseUrl + '/keys.json';
+        const res = await fetch(targetUrl, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Respuesta HTTP ' + res.status);
+        const data = await res.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+          const currentStr = JSON.stringify(keys);
+          const newStr = JSON.stringify(data);
+          if (currentStr !== newStr) {
+            keys = data;
+            try { localStorage.setItem(STORAGE_KEY, newStr); } catch(e) {}
+            renderAll();
+          }
+          updateCloudStatus('connected');
+          return true;
+        } else if (data === null) {
+          // Si la base en la nube es nueva y está vacía, subimos los datos iniciales
+          await saveToCloud();
+          updateCloudStatus('connected');
+          return true;
+        }
+      } catch (err) {
+        if (!silent) console.warn('Error al consultar la base en la nube:', err);
+        updateCloudStatus('error');
+        return false;
+      }
+    }
+
+    async function saveToCloud() {
+      const baseUrl = getCloudUrl();
+      if (!baseUrl) return;
+
+      try {
+        updateCloudStatus('syncing');
+        const targetUrl = baseUrl.endsWith('.json') ? baseUrl : baseUrl + '/keys.json';
+        const res = await fetch(targetUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(keys)
+        });
+        if (!res.ok) throw new Error('Error al guardar en nube: ' + res.status);
+        updateCloudStatus('connected');
+      } catch (err) {
+        console.error('Error al subir a la nube:', err);
+        updateCloudStatus('error');
+      }
+    }
+
+    function saveDataLocally() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
+      } catch (e) {
+        console.error('Error guardando en localStorage:', e);
+      }
+      // Envía automáticamente el cambio a la nube para que las demás PCs lo vean
+      saveToCloud();
+    }
+
+    function openCloudModal() {
+      const modal = document.getElementById('cloudModal');
+      const input = document.getElementById('cloudDbUrlInput');
+      const feedback = document.getElementById('cloudTestFeedback');
+      if (input) input.value = getCloudUrl();
+      if (feedback) feedback.textContent = '';
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeCloudModal() {
+      const modal = document.getElementById('cloudModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    async function testCloudConnection() {
+      const input = document.getElementById('cloudDbUrlInput');
+      const feedback = document.getElementById('cloudTestFeedback');
+      let url = input.value.trim();
+      if (!url) {
+        feedback.style.color = '#f87171';
+        feedback.textContent = '❌ Por favor ingresa una URL válida de Firebase Realtime Database.';
+        return;
+      }
+      url = url.replace(/\/+$/, '');
+      const targetUrl = url.endsWith('.json') ? url : url + '/keys.json';
+
+      feedback.style.color = '#38bdf8';
+      feedback.textContent = '⏳ Conectando con Firebase...';
+
+      try {
+        const res = await fetch(targetUrl, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Error HTTP ' + res.status);
+        feedback.style.color = '#34d399';
+        feedback.textContent = '✅ ¡Conexión exitosa! Firebase responde correctamente.';
+      } catch (err) {
+        feedback.style.color = '#f87171';
+        feedback.textContent = '❌ No se pudo conectar. Verifica que las reglas de Firebase estén en modo de prueba (lectura y escritura pública).';
+      }
+    }
+
+    async function saveCloudConfig() {
+      const input = document.getElementById('cloudDbUrlInput');
+      const feedback = document.getElementById('cloudTestFeedback');
+      let url = input.value.trim();
+      if (!url) {
+        feedback.style.color = '#f87171';
+        feedback.textContent = '❌ Por favor ingresa una URL válida.';
+        return;
+      }
+      url = url.replace(/\/+$/, '');
+      localStorage.setItem(CLOUD_DB_KEY, url);
+      closeCloudModal();
+      alert('¡Base de datos vinculada con éxito! Sincronizando datos...');
+      await fetchFromCloud();
+    }
+
+    function clearCloudConfig() {
+      if (confirm('¿Deseas desconectar la base de datos en la nube y volver al modo solo local?')) {
+        localStorage.removeItem(CLOUD_DB_KEY);
+        closeCloudModal();
+        updateCloudStatus('local');
+        alert('Desconectado de la nube.');
+      }
+    }
+
+    async function init() {
       try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
           keys = JSON.parse(stored);
         } else {
           keys = INITIAL_DATA;
-          saveDataLocally();
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(keys)); } catch(e) {}
         }
       } catch (e) {
         keys = INITIAL_DATA;
       }
       renderAll();
       setupEvents();
-      setupDragAndDrop();
-    }
 
-    function saveDataLocally() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
-        if (fileHandle) {
-          saveToFileHandle();
-        }
-      } catch (e) {
-        console.error('Error saving data:', e);
-      }
-    }
-
-    async function linkLocalJsonFile() {
-      if ('showOpenFilePicker' in window) {
-        try {
-          const [handle] = await window.showOpenFilePicker({
-            types: [{ description: 'Archivo JSON', accept: { 'application/json': ['.json'] } }],
-            multiple: false
-          });
-          fileHandle = handle;
-          const file = await handle.getFile();
-          const text = await file.text();
-          const parsed = JSON.parse(text);
-          if (Array.isArray(parsed)) {
-            keys = parsed;
-            saveDataLocally();
-            renderAll();
-            document.getElementById('syncStatusText').textContent = '🟢 Vinculado a: ' + handle.name + ' (Guardado directo activado)';
-            alert('¡Archivo vinculado con éxito! Los cambios se guardarán automáticamente en ' + handle.name);
-          }
-        } catch (err) {
-          if (err.name !== 'AbortError') alert('Error al vincular: ' + err.message);
-        }
+      // Sincronizar con la nube si está configurada
+      if (getCloudUrl()) {
+        await fetchFromCloud();
       } else {
-        alert('Para vincular archivos directamente use Google Chrome o Microsoft Edge.');
-      }
-    }
-
-    async function saveToFileHandle() {
-      if (!fileHandle) return false;
-      try {
-        const writable = await fileHandle.createWritable();
-        await writable.write(JSON.stringify(keys, null, 2));
-        await writable.close();
-        return true;
-      } catch (e) {
-        console.error('Error writing to file handle:', e);
-        return false;
-      }
-    }
-
-    async function saveDirectToFileOrDownload() {
-      if (fileHandle) {
-        const ok = await saveToFileHandle();
-        if (ok) {
-          alert('¡Inventario guardado directamente en ' + fileHandle.name + '!');
-          return;
-        }
+        updateCloudStatus('local');
       }
 
-      if ('showSaveFilePicker' in window) {
-        try {
-          const handle = await window.showSaveFilePicker({
-            suggestedName: 'inventario_llaves.json',
-            types: [{ description: 'Archivo de Inventario JSON', accept: { 'application/json': ['.json'] } }]
-          });
-          fileHandle = handle;
-          await saveToFileHandle();
-          document.getElementById('syncStatusText').textContent = '🟢 Vinculado a: ' + handle.name;
-          alert('¡Guardado exitoso en ' + handle.name + '!');
-          return;
-        } catch (e) {
-          if (e.name === 'AbortError') return;
-        }
-      }
+      // Consultar periódicamente cada 12 segundos por cambios de otras PCs
+      setInterval(() => {
+        if (getCloudUrl()) fetchFromCloud(true);
+      }, 12000);
 
-      // Fallback
-      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(keys, null, 2));
-      const a = document.createElement('a');
-      a.href = dataStr;
-      a.download = 'inventario_llaves.json';
-      a.click();
-    }
-
-    function downloadSelfUpdatedHtml() {
-      const currentHtml = document.documentElement.outerHTML;
-      const updatedHtml = currentHtml.replace(/const INITIAL_DATA = \\[.*?\\];/s, 'const INITIAL_DATA = ' + JSON.stringify(keys) + ';');
-      const blob = new Blob([updatedHtml], { type: 'text/html;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'Control_de_Llaves_OFFLINE_' + new Date().toISOString().slice(0,10) + '.html';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function setupDragAndDrop() {
-      const overlay = document.getElementById('dropOverlay');
-      window.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        overlay.classList.add('active');
+      // Sincronizar automáticamente cuando el usuario vuelve a enfocar la pestaña
+      window.addEventListener('focus', () => {
+        if (getCloudUrl()) fetchFromCloud(true);
       });
-      window.addEventListener('dragleave', (e) => {
-        if (e.relatedTarget === null) overlay.classList.remove('active');
-      });
-      window.addEventListener('drop', (e) => {
-        e.preventDefault();
-        overlay.classList.remove('active');
-        const file = e.dataTransfer.files[0];
-        if (file && file.name.endsWith('.json')) {
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            try {
-              const parsed = JSON.parse(event.target.result);
-              if (Array.isArray(parsed)) {
-                keys = parsed;
-                saveDataLocally();
-                renderAll();
-                alert('¡Inventario cargado desde ' + file.name + ' con éxito!');
-              }
-            } catch (err) {
-              alert('Error al leer el archivo JSON.');
-            }
-          };
-          reader.readAsText(file);
-        }
-      });
-    }
-
-    function handleFileImport(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          try {
-            const parsed = JSON.parse(event.target.result);
-            if (Array.isArray(parsed)) {
-              keys = parsed;
-              saveDataLocally();
-              renderAll();
-              alert('¡Inventario cargado con éxito!');
-            }
-          } catch (err) {
-            alert('Error al leer el archivo JSON.');
-          }
-        };
-        reader.readAsText(file);
-      }
-    }
-
-    function openSyncHelpModal() {
-      document.getElementById('syncHelpModal').classList.add('active');
-    }
-    function closeSyncHelpModal() {
-      document.getElementById('syncHelpModal').classList.remove('active');
     }
 
     function setupEvents() {
